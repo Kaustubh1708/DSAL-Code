@@ -1,179 +1,271 @@
-//================================Name:-VAIBHAV SAWANT **** Roll no:-SCOB54==========================================//
-/*
-Problem statement :-Department maintains a student information. The file contains roll number, name, 
-           division and address. Allow user to add, delete information of student. Display 
-           information of particular employee. If record of student does not exist an appropriate 
-           message is displayed. If it is, then the system displays the student details. Use sequential 
-           file to main the data.*/
-#include <iostream>        // standard input-output stream.
-#include<fstream>          // fstream header file for ifstream, ofstream,fstream classes
-#include<cstring>
-#include<iomanip>
-using namespace std;
-const int MAX=20;
-class Student
+// Assignment No. 2 
+/* Problem Statement : Department maintains a student information. The 
+file contains roll number, name, 
+division and address. Allow user to add, delete information of student. 
+Display 
+information of particular student. If record of student does not exist an 
+appropriate 
+message is displayed. If it is, then the system displays the student 
+details. Use sequential file to main the data. 
+*/ 
+#include<iostream> 
+#include<fstream> 
+#include<cstdio> 
+
+using namespace std; 
+
+class student 
 {
- int rollno;
- char name[20],address[20];
- char div;
- int year;
-public:
- Student()
+public: 
+
+int rollno; 
+char name[50]; 
+char add[50]; 
+char div[5]; 
+
+
+void setData() 
 {
-  strcpy(name,"");
-  strcpy(address,"");
-  rollno=year=div=0;
+cout<<"\n----------------------------------------"; 
+cout<<"\nEnter Roll no: "; 
+cin>>rollno; 
+cout<<"Enter Name: "; 
+cin>>name; 
+cout<<"Address of student: "; 
+cin>>add; 
+cout<<"Division of student: "; 
+cin>>div; 
 }
- Student(int rollno,char name[MAX],int year,char div,char address[MAX])
- {
-  strcpy(this->name,name);
-  strcpy(this->address,address);
-  this->rollno=rollno;
-  this->year=year;
-  this->div=div;
- }
- int getRollNo()
- {
-  return rollno;
- }
- void displayRecord()
- {
 
-  cout<<endl<<setw(5)<<rollno<<setw(20)<<name<<setw(5)<<year<<setw(5)<<div<<setw(10)<<address;
- }
-};
-//==========**************File Operations *****************===========//
-class FileOperations
+void showData() 
 {
- fstream file;
-public:
- FileOperations(char* filename)
-{
-file.open(filename,ios::in|ios::out|ios::ate|ios::binary); //member constants in,out,atend,append
+cout<<"\n----------------------------------------"; 
+cout<<"\n Roll number of student: "<<rollno; 
+cout<<"\n Name of the student: "<<name; 
+cout<<"\n Address of student: "<<add; 
+cout<<"\n Division of student: "<<div; 
 }
- void insertRecord(int rollno, char name[MAX],int year, char div,char address[MAX])
- {
-  Student s1(rollno,name,year,div,address);
-  file.seekp(0,ios::end);
-  file.write((char *)&s1,sizeof(Student));
-  file.clear();
- }
- void displayAll()
- {
-  Student s1;
-  file.seekg(0,ios::beg);
-  while(file.read((char *)&s1, sizeof(Student)))   // typecasting:- the conversion of one data type to another in a program.
-  {
-   s1.displayRecord();
-  }
-  file.clear();
- }
- void displayRecord(int rollNo)
- {
-  Student s1;
-  file.seekg(0,ios::beg);
-  bool flag=false;
-  while(file.read((char*)&s1,sizeof(Student)))
-  {
-   if(s1.getRollNo()==rollNo)
-   {
-    s1.displayRecord();
-    flag=true;
-    break;
-   }
-  }
-  if(flag==false)
-  {
-   cout<<"\nRecord of "<<rollNo<<"is not present.";
-  }
-  file.clear();
- }
- void deleteRecord(int rollno)  //to delete a record from a file is to copy the file 
-                                //to another temporary file and then copy the records to the same file again by skipping the record that u need to delete
- {
-  ofstream outFile("new.dat",ios::binary);
-  file.seekg(0,ios::beg);
-  bool flag=false;
-  Student s1;
 
-  while(file.read((char *)&s1, sizeof(Student)))
-  {
-   if(s1.getRollNo()==rollno)
-   {
-    flag=true;
-    continue;
-   }
-   outFile.write((char *)&s1, sizeof(Student));
-  }
-  if(!flag)
-  {
-   cout<<"\nRecord of "<<rollno<<" is not present.";
-  }
-  file.close();
-  outFile.close();
-  remove("student.dat");
-  rename("new.dat","student.dat");
-  file.open("student.dat",ios::in|ios::out|ios::ate|ios::binary);
- }
- ~FileOperations()
- {
-  file.close();
-  cout<<"\nFile Closed.";
- }
-};
-int main() {
- ofstream newFile("student.dat",ios::app|ios::binary);
-  newFile.close();
-  FileOperations file((char*)"student.dat");
-     int rollNo,year,choice=0;
-     char div;
-     char name[MAX],address[MAX];
-     while(choice!=5)
-     {
-         //clrscr();
-         cout<<"\n*****Student Database*****\n";
-         cout<<"1) Add New Record\n";
-         cout<<"2) Display All Records\n";
-         cout<<"3) Display by RollNo\n";
-         cout<<"4) Deleting a Record\n";
-         cout<<"5) Exit\n";
-         cout<<"Choose your choice : ";
-         cin>>choice;
-         switch(choice)
-         {
-             case 1 : //New Record
-               cout<<endl<<"Enter RollNo :\n";
-               cin>>rollNo;
-               cout<<endl<<"Enter your Name :\n";
-               cin>>name ;
-               cout<<endl<<"Enter Year :\n";
-               cin>>year;
-               cout<<endl<<"Enter your Division  : \n";
-               cin>>div;
-               cout<<endl<<"Enter address :\n";
-               cin>>address;
-               file.insertRecord(rollNo,name,year,div,address);
-               cout<<"\nRecord Inserted.";
-               break;
-             case 2 :
-              cout<<endl<<setw(5)<<"ROLL"<<setw(20)<<"NAME"<<setw(5)<<"YEAR"<<setw(5)<<"DIV"<<setw(10)<<"address";
-               file.displayAll();
-               break;
-             case 3 :
-               cout<<"Enter Roll Number :-";
-               cin>>rollNo;
-                file.displayRecord(rollNo);
+int retrollno() 
+{
+return rollno; 
+}
+}; 
+ 
+void create() 
+{
+ofstream outfile; 
+outfile.open("StudentData", ios::binary | ios::app); 
 
-               break;
-             case 4:
-               cout<<"Enter rollNo :-";
-               cin>>rollNo;
-               file.deleteRecord(rollNo);
-               break;
-            case 5 :break;
-         }
+student obj; 
+obj.setData(); 
+outfile.write((char*)&obj, sizeof(obj)); 
+outfile.close(); 
+}
 
-     }
+void display() 
+{
+ifstream infile; 
+infile.open("StudentData", ios::binary); 
 
- return 0;
-}           
+student obj; 
+
+while(infile.read((char*)&obj, sizeof(obj))) 
+{
+obj.showData(); 
+}
+infile.close(); 
+}
+
+void search(int n) 
+{
+bool flag=false; ifstream infile; 
+infile.open("StudentData", ios::binary); 
+
+student obj; 
+
+
+while (infile.read((char*)&obj, sizeof(obj))) 
+{
+if(obj.rollno==n) 
+{
+flag=true; 
+obj.showData(); 
+break; 
+}
+if(flag==false) 
+{
+cout<<"Record for roll no. is not found in the file."; 
+}
+}
+}
+
+void deleter(int n) 
+{
+student obj; 
+ 
+ifstream infile; 
+infile.open("StudentData", ios::binary); 
+
+ofstream outfile; 
+outfile.open("StudentNewData", ios::out | ios::binary); 
+
+while(infile.read((char*)&obj, sizeof(obj))) 
+{
+if(obj.retrollno() != n) 
+{
+outfile.write((char*)&obj, sizeof(obj)); 
+}
+}
+infile.close(); 
+outfile.close(); 
+remove("StudentData"); 
+rename("StudentNewData","StudentData"); 
+}
+
+int main() 
+{
+int ch; 
+do 
+{
+cout<<"\n.............File Operations..............\n 1.Add 
+Record. \n 2.Display Record. \n 3.Search a particular Record. \n 4.Delete 
+particular Record. \n 5.Exit"; 
+
+cout<<"\n Enter your choice: "; 
+cin>>ch; 
+switch(ch) 
+{
+case 1: 
+cout<<"Enter total no. of records you want to store in a file: 
+"; 
+int n; 
+cin>>n; 
+for(int i=0; i<n; i++) 
+{
+create(); 
+}
+break; 
+case 2: 
+cout<<"\n List of records: "; 
+display(); 
+break; 
+case 3: 
+cout<<"Enter student roll no. whose record you want search: "; 
+int s; 
+cin>>s; 
+search(s); 
+break; 
+case 4: 
+ 
+cout<<"Enter student roll no. whose record you want delete: "; 
+int t; 
+cin>>t; 
+deleter(t); 
+cout<<"Record Deleted Successfully!!"; 
+break; 
+case 5: 
+return 0; 
+}
+}while(ch!=6); 
+}
+
+
+Output : 
+.............File Operations.............. 
+1. Add Record. 
+2. Display Record. 
+3. Search a particular Record. 4. Delete particular Record. 
+5. Exit 
+Enter your choice: 1 
+Enter total no. of records you want to store in a file: 3 
+
+---------------------------------------- 
+Enter Roll no: 06 
+Enter Name: Kaustubh 
+Address of student: Pune 
+Division of student: B 
+
+---------------------------------------- 
+Enter Roll no: 11 
+Enter Name: Avishkar 
+Address of student: Nashik 
+Division of student: C 
+
+---------------------------------------- 
+Enter Roll no: 26 
+Enter Name: Prathmesh 
+Address of student: Sangli 
+Division of student: D 
+
+.............File Operations.............. 
+1. Add Record. 
+2. Display Record. 
+3. Search a particular Record. 4. Delete particular Record. 
+5. Exit 
+Enter your choice: 2 
+
+List of records: 
+---------------------------------------- 
+Roll number of student: 06 
+Name of the student: Kaustubh 
+Address of student: Pune 
+ 
+Division of student: B 
+---------------------------------------- 
+Roll number of student: 11 
+Name of the student: Avishkar 
+Address of student: Nashik 
+Division of student: C 
+---------------------------------------- 
+Roll number of student: 26 
+Name of the student: Prathmesh 
+Address of student: Sangli 
+Division of student: D 
+.............File Operations.............. 
+1. Add Record. 
+2. Display Record. 
+3. Search a particular Record. 4. Delete particular Record. 
+5. Exit 
+Enter your choice: 3 
+Enter student roll no. whose record you want search: 26 
+Record for roll no. is not found in the file.Record for roll no. is not 
+found in the file. 
+---------------------------------------- 
+Roll number of student: 26 
+Name of the student: Prathmesh 
+Address of student: Sangli 
+Division of student: D 
+.............File Operations.............. 
+1. Add Record. 
+2. Display Record. 
+3. Search a particular Record. 4. Delete particular Record. 
+5. Exit 
+Enter your choice: 4 
+Enter student roll no. whose record you want delete: 26 
+Record Deleted Successfully!! 
+.............File Operations.............. 
+1. Add Record. 
+2. Display Record. 
+3. Search a particular Record. 4. Delete particular Record. 
+5. Exit 
+Enter your choice: 2 
+
+List of records: 
+---------------------------------------- 
+Roll number of student: 06 
+Name of the student: Kaustubh 
+Address of student: Pune 
+Division of student: B 
+---------------------------------------- 
+Roll number of student: 11 
+Name of the student: Avishkar 
+Address of student: Nashik 
+Division of student: C 
+ 
+.............File Operations.............. 
+1. Add Record. 
+2. Display Record. 
+3. Search a particular Record. 4. Delete particular Record. 
+5. Exit 
+Enter your choice: 5 
