@@ -1,351 +1,495 @@
+// Assignment No. 4 
+/* Problem Statement : A Dictionary stores keywords & its meanings. 
+Provide facility for adding new keywords, 
+deleting keywords, updating values of any entry. Provide facility to 
+display whole data 
+sorted in ascending/ Descending order. Also find how many maximum 
+comparisons may 
+require for finding any keyword. Use Binary Search Tree for 
+implementation. */ 
+#include <iostream> #include <string.h> 
+using namespace std; 
 
-/***************--SCOB54 VAIBHAV SAWANT ASSIGNMENT 4 CODE--**********************
-A Dictionary stores keywords & its meanings. Provide facility for adding new keywords, 
-deleting keywords, updating values of any entry. Provide facility to display whole data 
-sorted in ascending/ Descending order. Also find how many maximum comparisons may 
-require for finding any keyword. Use Binary Search Tree for implementation.
-**********************************************************************************/
-
-#include <iostream>
-#include<string.h>
-using namespace std;
-
-struct node  // to defne struct with same name 
+class Node 
 {
-
- char word[20];         
- char meaning[20];
- struct node  *left;
- struct node * right;
-}*r;
-
-class dict      // declaration of class dictionary 
+public: 
+string word, mean; 
+Node *left, *right; 
+}; 
+class tree 
 {
-public:        // function declaration 
- node *root;
- void create();                             // creation of node
- void disp(node *);                         // display data
- void insert(node * root,node *temp);       //insert the data
- int search(node *,char []);                // search the data
- int update(node *,char []);                // updating existing data
- void inorder_rec(node *rnode);             // to dispaly in increasing order
- void Descending_rec(node *rnode);           // to dispaly in decreasing order
- void inorder()
- {
-  inorder_rec(root);
- }
- void Descending()
- {
- Descending_rec(root);
+public: 
+Node *root; 
+int flag = 0; 
+Node *creat_tree() 
+{
+root = new Node(); 
+cout << "Enter the word =>"; 
+cin >> root->word; 
+cout << "Enter the meaning =>"; 
+cin >> root->mean; root->left = NULL; 
+root->right = NULL; 
+return root; 
 }
- node* del(node *,char []);                 // deletion of data
- node * min(node *);                        // to find minimum
-};
-
-
-void dict :: create()             // 1.Create function
+void insert(string word_, string meaning, Node *root) 
 {
- struct node *temp;
- int ch;
-
- do
- {
-  temp = new node;        //new keyword is used for memory allocation
-  cout<<"\nEnter Keyword:";
-  cin>>temp->word;                // word as inpuy
-  cout<<"\nEnter Meaning:";
-  cin>>temp->meaning;            //meaning as input
-
-  temp->left = NULL;            // isolated nodes
-  temp->right = NULL;
-
-  if(root == NULL)
-  {
-   root = temp;
-  }
-  else
-  {
-   insert(root, temp);
-  }
-  cout<<"\nDo u want to add more (y=>1/n=>0):";
-  cin>>ch;
- }
- while(ch == 1);
-
+if (root->word.compare(word_) > 0) 
+{
+if (root->left == NULL) 
+{
+Node *node = new Node(); 
+root->left = node; 
+node->word = word_; 
+node->mean = meaning; 
 }
-
-void dict ::  insert(node * root,node *temp)     //2. insert function
+else 
 {
- if(strcmp (temp->word, root->word) < 0 )      // strcmp is used to compare strings return 0 (equal),
-                                               //returns value (V>0) (L>R) ;returns value (V<0) for l<R 
- {
-  if(root->left == NULL)
-   root->left = temp;
-  else
-   insert(root->left,temp);
- }
- else
- { if(root->right == NULL)
-   root->right = temp;
-  else
-   insert(root->right,temp);
- }
-
+insert(word_, meaning, root->left); 
 }
-
-void dict:: disp(node * root)       // 3.display function
-
-{
- if( root != NULL)
- {
-  disp(root->left);
-  cout<<"\n Key Word :"<<root->word;
-  cout<<"\t Meaning :"<<root->meaning;
-  disp(root->right);
- }
 }
-
-
-int dict :: search(node * root,char word[20])     //4.search operation
+else 
 {
- int c=0;      //initializing one count variable as c
- while(root != NULL)
- {
-  c++;
-  if(strcmp (word,root->word) == 0)  // matches with root value 
-  {
-   cout<<"\nNo of Comparisons:"<<c;
-   return 1;
-  }
-  if(strcmp (word, root->word) < 0) // present in left subtree
-   root = root->left;
-  if(strcmp (word, root->word) > 0) // present in right subtree
-   root = root->right;
- }
-
- return -1;
+if (root->word.compare(word_) < 0) 
+ 
+{
+if (root->right == NULL) 
+{
+Node *node = new Node(); 
+root->right = node; node->word = word_; 
+node->mean = meaning; 
 }
-int dict :: update(node * root,char word[20])  // 5.updating value need to implement search Operation
+else 
 {
- while(root != NULL)
- {
-  if(strcmp (word,root->word) == 0)
-  {
-   cout<<"\nEnter New Meaning of Keyword : "<<root->word<< "=";
-   cin>>root->meaning;
-   return 1;
-  }
-  if(strcmp (word, root->word) < 0)
-   root = root->left;
-  if(strcmp (word, root->word) > 0)
-   root = root->right;
- }
- return -1;
+insert(word_, meaning, root->right); 
 }
-node* dict :: del(node * root,char word[20])   // 6.delete operation involves four cases
+}
+}
+}
+void inorder(Node *root) 
 {
- node *temp;
+if (root != NULL) 
+{
+inorder(root->left); 
+cout << "word=> " << root->word << " meaning=> " << root->mean 
+<< endl; 
+inorder(root->right); 
+}
+}
+void inorder_dis(Node *root) 
+{
+if (root != NULL) 
+{
+inorder_dis(root->right); 
+cout << "word=> " << root->word << " meaning=> " << root->mean 
+<< endl; 
+inorder_dis(root->left); 
+}
+}
+Node *search(string key, Node *root) 
+{
+if (root->word.compare(key) > 0) 
+{
+if (root->left == NULL) 
+{
+cout << "\nWord found \n"; 
+}
+else 
+{
+search(key, root->left); 
+}
+}
+else if (root->word.compare(key) < 0) 
+{
+if (root->right == NULL) 
+{
+cout << "\nWord found\n"; 
+}
+ 
+else 
+{
+search(key, root->right); 
+}
+}
+else if (root->word.compare(key) == 0) 
+{
+cout << "\nWord found\n"; 
 
- if(root == NULL)
- {
-  cout<<"\nElement Not Found";
-  return root;
- }
-
- if (strcmp(word,root->word) < 0)
- {
-  root->left = del(root->left, word);
-  return root;
- }
- if (strcmp(word,root->word) > 0)
- {
-   root->right = del(root->right, word);
-   return root;
- }
-
- if (root->right==NULL&&root->left==NULL) // and operator #case of leaf node 
- {
-  temp = root;
-  delete temp;
-  return 0;
-  }
-  if(root->right==NULL)     // only left child present
-  {
-  temp = root;
-  root = root->left;
-  delete temp;
-  return root;
-  }
-  else if(root->left==NULL)  // only left child present
-  {
-  temp = root;
-  root = root->right;
-  delete temp;
-  return root;
-  }
-  temp = min(root->right);
-  strcpy(root->word,temp->word);  //to copy one string to another
-  root->right = del(root->right, temp->word);
-  return root;
-
+return root; 
+}
 }
 
-node * dict :: min(node *q)
+void search_(string key, Node *root) 
 {
- while(q->left != NULL)
- {
-  q = q->left;
- }
- return q;
+if (root->word.compare(key) > 0) 
+{
+if (root->left == NULL) 
+{
+cout << "\nWord is not found \n"; 
 }
-
-
-
-void dict :: inorder_rec(node *rnode)    // for ascending order
+else 
 {
- if(rnode)
- {
-  inorder_rec(rnode->left);
-  cout<<" "<<rnode->word<<" : "<<rnode->meaning<<endl;
-  inorder_rec(rnode->right);
- }
+search_(key, root->left); 
 }
-void dict :: Descending_rec(node *rnode)    // for ascending order
+}
+else if (root->word.compare(key) < 0) 
 {
- if(rnode)
- {
-  Descending_rec(rnode->right);
-  cout<<" "<<rnode->word<<" : "<<rnode->meaning<<endl;
-  Descending_rec(rnode->left);
- }
+if (root->right == NULL) 
+{
+cout << "\nWord is not found \n"; 
+}
+else 
+{
+search_(key, root->right); 
+}
+}
+else if (root->word.compare(key) == 0) 
+{
+string meaning; 
+cout << "Enter the meaning =>"; 
+cin >> meaning; 
+root->mean = meaning; 
+cout << "Replaced"; 
+}
+}
+void replace() 
+{
+Node *a; 
+string key; 
+cout << "Enter the word of which meaning to have changed=> "; 
+cin >> key; 
+search_(key, root); 
+}
+ 
+void search_count(string key, Node *root ,int *count) 
+{	if (root->word.compare(key) > 0) 
+{
+(*count)++; 
+
+cout<<"The count is "<<*count; 
+// return *count; 
+}
+else if (root->word.compare(key) > 0) 
+ 
+{
+
+
+
+
+
+
+
+
+
+}
+else 
+{
+
+
+
+
+
+
+
+
+
+}
+ 
+(*count)++; (*count)++; 
+if (root->left == NULL) 
+{
+cout<<"The count is ",*count; 
+}
+else 
+{
+search_count(key, root->left,count); 
 }
 
 
-int main()
+(*count)++; (*count)++; 
+if (root->right == NULL) 
 {
- int ch;
- dict d;
- d.root = NULL;
-
-
- do
- {
-  cout<<" "<<endl;
-  cout<<"*************************"<<endl;
-  cout<<"Operations On Dictionary"<<endl;
-  cout<<"*************************"<<endl;
-  cout<<"1.Create"<<endl;
-  cout<<"2.Display"<<endl;
-  cout<<"3.Search"<<endl;
-  cout<<"4.Update"<<endl;
-  cout<<"5.Delete"<<endl;
-  cout<<"6.Ascending order "<<endl;
-  cout<<"7.Descending order "<<endl;
-  cout<<"8.Exit"<<endl;
-  cout<<"========================"<<endl;
-  cout<<"Enter your choice:";
-  cin>>ch;
-
-  switch(ch)
-  {
-    case 1: d.create();
-        break;
-    
-    case 2: if(d.root == NULL)
-  {
-    cout<<"\nNo any Keyword"<<endl;
-  }
-    else
-  {
-    cout<<"Stored data is : "<< endl;
-    d.disp(d.root);
-    
-  }
-    break;
-    case 3: if(d.root == NULL)
- {
-    cout<<"\nDictionary is Empty. First add keywords then try again ";
- }
-    else
- {
-
-    cout<<"\nEnter Keyword which you want to search:";
-    char word[20];
-    cin>>word;
-
-    if( d.search(d.root,word) == 1)
-    cout<<"\nKeyword Found";
-    else
-    cout<<"\nKeyword Not Found";
- }
-    break;
-    case 4:
-    if(d.root == NULL)
-  {
-    cout<<"\nDictionary is Empty. First add keywords then try again ";
- }
-    else
-  {
-    cout<<"\nEnter Keyword which meaning  want to update:";
-    char word[20];
-    cin>>word;
-    if(d.update(d.root,word) == 1)
-    cout<<"\nMeaning Updated";
-    else
-    cout<<"\nMeaning Not Found";
-  }
-    break;
-    case 5:
-    if(d.root == NULL)
-  {
-    cout<<"\nDictionary is Empty. First add keywords then try again ";
-  }
-    else
-  {
-    cout<<"\nEnter Keyword which u want to delete:";
-    char word[20];
-    cin>>word;
-    if(d.root == NULL)
-  {
-    cout<<"\nNo any Keyword";
-  }
-    else
-  {
-    d.root = d.del(d.root,word);
-  }
-  break;
-    case 6:
-    if(d.root == NULL)
-    {
-     cout<<"\nDictionary is Empty. First add keywords then try again ";  
-    }
-    else
-    {
-     cout<<"\nAscending order is:\n"; 
-     d.inorder();
-     
-    }
-    break;
-    case 7:
-    if(d.root == NULL)
-    {
-     cout<<"\nDictionary is Empty. First add keywords then try again ";  
-    }
-    else
-    {
-     cout<<"\nDescending order is:\n"; 
-     d.Descending();
-     
-    }
-    break;
-    case 8:
-            exit(1);
-    default:
-            cout<<"Wrong choice"<<endl;
-    
-   }
-  }
- } 
-  while(1);
-  return 0;
+cout<<"The count is "<<*count; 
 }
+else 
+{
+search_count(key, root->right,count); 
+}
+ 
+
+}
+Node *Successor(Node *root) 
+{
+Node *Successor = root; 
+while (Successor->left != NULL) 
+{
+Successor = Successor->left; 
+}
+return Successor; 
+}
+
+Node *delete_(Node *root, string Keyword) 
+{
+if (root != NULL) 
+{
+if (Keyword == root->word) 
+{
+if (root->left == NULL) 
+{
+Node *temp = root->right; 
+ 
+free(root); 
+cout << "\nThe word has been deleted 
+successfully.\n\n"; 
+return temp; 
+}
+else if (root->right == NULL) 
+{
+Node *temp = root->left; 
+free(root); 
+cout << "\nThe word has been deleted 
+ 
+successfully.\n\n"; 
+
+}
+else 
+{
+
+
+
+
+}
+}
+ 
+
+return temp; 
+
+
+
+Node *temp = Successor(root->right); 
+root->word = temp->word; root->mean = temp->mean; 
+root->right = delete_(root->right, temp->word); 
+ 
+else if (Keyword.compare(root->word) < 0) 
+root->left = delete_(root->left, Keyword); 
+else 
+root->right = delete_(root->right, Keyword); 
+}
+else 
+cout << "\n\nValue not found.\n\nThe word " << Keyword << " is 
+not present in the dictionary.\n\n"; 
+return root; 
+}
+}; 
+int main() 
+{
+int ch, flag = 0; 
+int Long,a; 
+tree obj; 
+Node *root; 
+string key, ser, word, mean, str; 
+int count=0; 
+do 
+{
+cout << "\n1. Add the node \n2. Display \n3. Search\n4.replace 
+\n5.delete \n6. Exit\nenter choice =>"; 
+cin >> ch; 
+switch (ch) 
+{
+case 1: 
+int no; 
+cout << "Enter how many words you want to add => "; 
+cin >> no; 
+for (int k = 0; k < no; k++) 
+{
+// cout << "\nEnter the word=> "; 
+ 
+// cin >> key; 
+if (flag == 0) 
+{
+root = obj.creat_tree(); 
+flag = 1; 
+}
+else 
+{
+cout << "Enter the word=>"; 
+cin >> word; 
+cout << "Enter the meaning=>"; 
+cin >> mean; 
+obj.insert(word, mean, root); 
+}
+}
+break; 
+case 2: 
+cout << "\nAssending\n"; 
+obj.inorder(root); 
+cout << "\n"; 
+cout << "\nDescending\n"; 
+obj.inorder_dis(root); 
+
+break; 
+case 3: 
+cout << "Enter the word you want to search => "; 
+cin >> ser; 
+obj.search(ser, root); 
+obj.search_count(ser, root,&count); 
+// cout<<"\n"<<a; 
+break; 
+case 4: 
+obj.replace(); 
+break; 
+case 5: 
+cout << "Enter the word=>"; 
+cin >> str; 
+obj.delete_(root, str); 
+break; 
+case 6: 
+break; 
+}
+} while (ch != 6); 
+}
+
+/*
+Output : 
+ 
+
+1. 2. 3. 4. 5. 6. 
+ 
+
+Add the node 
+Display 
+Search 
+replace 
+delete 
+Exit 
+ 
+ 
+enter 
+Enter Enter Enter Enter Enter Enter Enter Enter Enter 
+ 
+choice =>1 
+how many words you want to add => 4 
+the word =>ABC 
+the meaning =>abc 
+the word=>XYZ 
+the meaning=>xyz 
+the word=>PQR 
+the meaning=>pqr 
+the word=>LMN 
+the meaning=>lmn 
+ 
+
+1. Add the node 
+2. Display 
+3. Search 
+4. replace 
+5. delete 
+6. Exit 
+enter choice =>2 
+
+Assending 
+ 
+word=> ABC word=> LMN word=> PQR word=> XYZ 
+
+
+Descending word=> XYZ word=> PQR word=> LMN word=> ABC 
+ 
+meaning=> meaning=> meaning=> meaning=> 
+
+
+
+meaning=> meaning=> meaning=> meaning=> 
+ 
+abc lmn pqr xyz 
+
+
+
+xyz pqr lmn abc 
+ 
+
+1. Add the node 
+2. Display 
+3. Search 
+4. replace 
+5. delete 
+6. Exit 
+enter choice =>3 
+Enter the word you want to search => PQR 
+
+Word found 
+The count is 3 
+1. Add the node 
+2. Display 
+3. Search 
+4. replace 
+5. delete 
+6. Exit 
+enter choice =>4 
+Enter the word of which meaning to have changed=> PQR 
+Enter the meaning =>pqrs 
+Replaced 
+1. Add the node 
+ 
+2. Display 
+3. Search 
+4. replace 
+5. delete 
+6. Exit 
+enter choice =>2 
+
+Assending 
+ 
+word=> ABC word=> LMN word=> PQR word=> XYZ 
+
+
+Descending word=> XYZ word=> PQR word=> LMN word=> ABC 
+ 
+meaning=> meaning=> meaning=> meaning=> 
+
+
+
+meaning=> meaning=> meaning=> meaning=> 
+ 
+abc lmn 
+pqrs 
+xyz 
+
+
+
+xyz 
+pqrs 
+lmn abc 
+ 
+
+1. Add the node 
+2. Display 
+3. Search 
+4. replace 
+5. delete 
+6. Exit 
+enter choice =>5 
+Enter the word=>PQR 
+
+The word has been deleted successfully. 
+
+
+1. Add the node 
+2. Display 
+3. Search 
+4. replace 
+5. delete 
+6. Exit 
+enter choice =>2 
+
+Assending 
+word=> ABC meaning=> abc word=> LMN meaning=> lmn word=> XYZ meaning=> xyz */
+
+
+Descending 
+word=> XYZ meaning=> xyz word=> LMN meaning=> lmn word=> ABC meaning=> abc 
+
+1. 	Add the node 2. 	Display 3. 	Search 
+ 
+4. replace 
+5. delete 
+6. Exit 
+enter choice =>6
