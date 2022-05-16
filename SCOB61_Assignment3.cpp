@@ -1,303 +1,333 @@
-/*
-**************--SCOB54 VAIBHAV SAWANT ASSIGNMENT 3 CODE--**********************
-problem statement : beginning with an empty binary search tree, construct binary search 
-tree by inserting the values in the order given. after constructing a binary tree - 
-i. insert new node ii. find number of nodes in longest path iii. minimum data value found 
-in the tree iv. change a tree so that the roles of the left and right pointers are swapped 
-at every node v. search a value
-*/
-# include <iostream>         // provides basic input and output services for C++ programs
-# include <cstdlib>          // declares a set of general-purpose functions
-using namespace std;
-struct node//node declaration
-{
-   int key;
-   struct node *l;    //node declaration for left node   
-   struct node *r;    //node declaration for right node
-   
-}*r;
-class BST             //declaration of class as BST
-{
-   public://functions declaration
-   void search(node *, int);
-   
-   void insert(node *, node *);
-   
-   void preorder(node *);
-   void inorder(node *);
-   void postorder(node *);
-   void display(node *, int);
-   void minimum(struct node* node);
-   int  LongestPath(node *root);
-   node* Swapnodes(node *root);
-   BST()
-   {
-      r = NULL;
-   }
-};
+//Assignment No. 3 
+/* Problem Statement : Beginning with an empty binary search tree, 
+Construct binary search tree by inserting the 
+values in the order given. After constructing a binary tree - 
+i. Insert new node 
+ii. Find number of nodes in longest path from root 
+iii. Minimum data value found in the tree 
+iv. Change a tree so that the roles of the left and right pointers are 
+swapped at every 
+node 
+v. Search a value*/ 
+#include<iostream> 
+using namespace std; 
 
-
-void BST::insert(node *tree, node *newnode)  //To insert items in the tree
+struct Node 
 {
-   if (r == NULL)
-   {
-      r = new node;
-      r->key = newnode->key;
-      r->l= NULL;
-      r->r= NULL;
-      cout<<"Root node is Added"<<endl;    //this will execute only once 
-      return;
-   }
-   if (tree->key == newnode->key)
-   {
-      cout<<"Element already in the tree"<<endl;
-      return;
-   }
-   if (tree->key > newnode->key)
-   {
-      if (tree->l != NULL)
-      {
-         insert(tree->l, newnode);
-      }
-      else
-      {
-         tree->l= newnode;
-         (tree->l)->l = NULL;
-         (tree->l)->r= NULL;
-         cout<<"node Added To Left"<<endl;
-         return;
-      }
-   }
-   else
-   {
-      if (tree->r != NULL)
-      {
-         insert(tree->r, newnode);
-      }
-      else
-      {
-         tree->r = newnode;
-         (tree->r)->l= NULL;
-         (tree->r)->r = NULL;
-         cout<<"node Added To Right"<<endl;
-         return;
-      }
-   }
+int key; 
+Node *ln, *rn; 
+}; 
+
+class Tree 
+{
+public: 
+Node*root; 
+Node *create(int a)//for very first node in tree 
+{
+root = new Node(); 
+cout<<"Enter value for Root : "; 
+cin>>a; 
+root->key = a; 
+root->ln = NULL; root->rn = NULL; 
+
+//return root; 
 }
 
-void BST::display(node *ptr, int level)//print the tree
+void insert(int a, Node*root) 
 {
-   int i;
-   if (ptr != NULL)
-   {
-      display(ptr->r, level+1);
-      cout<<endl;
-      if (ptr == r)
-         cout<<"Root->: ";
-      else
-      {
-         for (i = 0;i < level;i++)
-         cout<<" ";
-      }
-      cout<<ptr->key;
-      display(ptr->l, level+1);
-   }
+Node*node = new Node(); 
+node->key = a; 
+if(root->key >a) 
+{
+if(root->ln == NULL) 
+{
+root->ln = node; 
 }
-
-int BST::LongestPath(node *root)
-{
-    if(root == NULL)
-       return 0;
-    int Lctr = LongestPath(root->l);
-    int Rctr = LongestPath(root->r);
-    if (Lctr>Rctr)
-       return (Lctr +1);
-    else return (Rctr +1);
-    
+else 
+insert(a, root->ln); 
 }
-
-void BST::search(node *root, int data) //To search an item in BST.
+else if(root->key < a) 
 {
-   int depth = 0;
-   node *temp = new node;
-   temp = root;
-   while(temp != NULL)
-   {
-      depth++;
-      if(temp->key == data)
-      {
-         cout<<"\nData found at depth: "<<depth<<endl;
-         return;
-      }
-      else if(temp->key > data)
-      temp = temp->l;
-      else
-      temp = temp->r;
-   }
-   cout<<"\n Data not found"<<endl;
-   return;
-}
-
-
-void BST::minimum(struct node*node)   
+if(root->rn == NULL) 
 {
-struct node* current = node;
+root->rn = node; 
  
-/* loop down to find the leftmost leaf */
-while (current->l != NULL)
+}
+else 
+insert(a, root->rn); 
+}
+}
+
+void displayInorder(Node*root) 
 {
-    current = current->l;
-    cout<<"Minimum value in BST is : "<<current->key<<endl;
-}
-return ;
-}
-
-
-void BST::preorder(node *ptr)     //to traverse the node as preorder as: root-l-f
+if(root != NULL) 
 {
-   if (r == NULL)
-   {
-      cout<<"Tree is empty"<<endl;
-      return;
-   }
-   if (ptr != NULL)
-   {
-      cout<<ptr->key<<" ";
-      preorder(ptr->l);
-      preorder(ptr->r);
-   }
+displayInorder(root->ln); 
+cout<<"\n"<<root->key<<"\n"; 
+displayInorder(root->rn); 
 }
-void BST::inorder(node *ptr)   // to traverse the node as inorder as:l-root-r
-  {
-   
-   if (r == NULL)
-   {
-      cout<<"Tree is empty"<<endl;
-      return;
-   }
-   if (ptr != NULL)
-   {
-      inorder(ptr->l);
-      cout<<ptr->key<<" ";
-      inorder(ptr->r);
-   }
 }
-void BST::postorder(node *ptr)   //to traverse the node as preorder as:l-r-root
+
+void minimum(Node*root) 
 {
-   if (r == NULL)
-   {
-      cout<<"Tree is empty"<<endl;
-      return;
-   }
-   if (ptr != NULL)
-   {
-      postorder(ptr->l);
-      postorder(ptr->r);
-      cout<<ptr->key<<" ";
-   }
-}
-
-
-node* Swapnodes(node *root)
+while(root->ln != NULL) 
 {
-    node* temp;
-    if (root == NULL)
-       return 0;
-       
-    temp = root->l;
-        root->l = root->r;
-        root->r = temp;
-
-        Swapnodes(root->l);
-        Swapnodes(root->r);
-    return 0;
-    
+root = root->ln; 
+}
+cout<<"\nMinimum number is : "<<root->key; 
 }
 
-int main()
+void search(Node*root, int searchKey) 
 {
-   int c, n,item ,Long;
-   BST bst;
-   node *t;
-   while (1)
-   {
-      cout<<"******************"<<endl;
-      cout<<"Operations on BST"<<endl;
-      cout<<"******************"<<endl;
-      cout<<"1.Insert Element "<<endl;
-      cout<<"2.Search Element"<<endl;
-      cout<<"3.Inorder Traversal"<<endl;
-      cout<<"4.Preorder Traversal"<<endl;
-      cout<<"5.Postorder Traversal"<<endl;
-      cout<<"6.Display the tree"<<endl;
-      cout<<"7.Minimum value in BST "<<endl;
-      cout<<"8.Longest path"<<endl;
-      cout<<"9.Swap"<<endl;
-      cout<<"10.Quit"<<endl;
-      cout<<"Enter your choice : ";
-      cin>>c;
-      switch(c)
-      {
-         case 1:
-            t = new node;
-            cout<<"Enter the number to be inserted : ";
-            cin>>t->key;
-            bst.insert(r, t);
-            break;
-         
-         case 2:
-            cout<<"Search:"<<endl;
-            cin>>item;
-            bst.search(r,item);
-            break;
-         
-         case 3:
-            cout<<"Inorder Traversal of BST:"<<endl;
-            bst.inorder(r);
-            cout<<endl;
-            break;
-         
-         case 4:
-            cout<<"Preorder Traversal of BST:"<<endl;
-            bst.preorder(r);
-            cout<<endl;
-            break;
-         
-         case 5:
-            cout<<"Postorder Traversal of BST:"<<endl;
-            bst.postorder(r);
-            cout<<endl;
-            break;
-         
-         case 6:
-            cout<<"Display BST:"<<endl;
-            bst.display(r,1);
-            cout<<endl;
-            break;
-         
-         case 7:
-            bst.minimum(r);
-            cout<<endl;
-            break;
-         
-         case 8:
-            Long = bst.LongestPath(r);
-            cout<<"Longest path in BST is :- "<<Long<<endl;
-            cout<<endl;
-            break;
-         
-         case 9:
-            cout << "Befors swap order in BST is :-",bst.inorder(r),"\n";
-            Swapnodes(r);
-            cout<<"After swap order in Bst is :-",bst.inorder(r),"\n";
-            Swapnodes(r);
-			cout<<endl;
-            break;
-         
-         case 10:
-            exit(1);
-         default:
-            cout<<"Wrong choice"<<endl;
-      }
-   }
+if(searchKey<root->key) 
+{
+if(root->ln==NULL) 
+cout<<"\nNumber not found !! "; 
+else 
+search(root->ln, searchKey); 
 }
+else if(searchKey>(root->key)) 
+{
+if(root->rn==NULL) 
+cout<<"\nNumber not found !! "; 
+else 
+search(root->rn, searchKey); 
+}
+else if(searchKey==(root->key)) 
+{
+cout<<"\nNumber found!! "; 
+}
+}
+
+int longestPath(Node*root) 
+{
+if (root==NULL) 
+return 0; 
+int Lctr= longestPath(root->ln); int Rctr= longestPath(root->rn); 
+if(Lctr>Rctr) 
+ 
+return (Lctr+1); 
+else return (Rctr+1); 
+}
+
+Node*swapNodes(Node* root) 
+{
+Node* temp; 
+if(root==NULL) 
+return NULL; 
+
+temp=root->ln; 
+root->ln=root->rn; 
+root->rn=temp; 
+
+swapNodes(root->ln); swapNodes(root->rn); 
+}
+}; 
+
+int main() 
+{
+Tree b1; 
+int choice,order, flag=0; 
+int key, searchKey; 
+Node*root; 
+do 
+{
+cout<<"\n----------------Binary Search Tree----------------"; 
+cout<<"\n1. Enter a number \n2. Display \n3. Swap left and right 
+nodes \n4. Search \n5. Exit (enter 0)"; 
+cout<<"\n--------------------------------------------------"; 
+cout<<"\nWhich operation you would like to perform? "; 
+cin>>choice; 
+switch(choice) 
+{
+case 1: 
+if(flag==0) 
+{
+root=b1.create(key); 
+flag=1; 
+}
+else 
+{
+cout<<"\nEnter the number : "; 
+cin>>key; 
+b1.insert(key,root); 
+}
+break; 
+
+case 2: 
+cout<<"\n1.Display list \n2.Show minimum number \n3.Show 
+number of nodes in longest path"; 
+cout<<"\nEnter your choice :"; 
+cin>>order; 
+ 
+switch(order) 
+{
+case 1: 
+b1.displayInorder(root); 
+break; 
+case 2: 
+b1.minimum(root); 
+break; 
+case 3: 
+cout<<"The height of the tree of longest path is : 
+"<<b1.longestPath(root); 
+break; 
+}
+break; 
+case 3: 
+b1.swapNodes(root); 
+cout<<"Swapped!! The new list is : "; 
+b1.displayInorder(root); 
+break; 
+
+case 4: 
+cout<<"\nEnter the number you want to search : "; 
+cin>>searchKey; 
+b1.search(root,searchKey); 
+break; 
+
+case 5: 
+break; 
+}
+}
+while(choice!=0); 
+return 0; 
+}; 
+
+
+/*Output : 
+
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 1 
+Enter value for Root : 20 
+
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+ 
+Which operation you would like to perform? 1 
+
+Enter the number : 10 
+
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 1 
+
+Enter the number : 25 
+
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 1 
+
+Enter the number : 15 
+
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 2 
+
+1. Display list 
+2. Show minimum number 
+3. Show number of nodes in longest path 
+Enter your choice :1 
+
+10 
+
+15 
+
+20 
+
+25 
+
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+ 
+-------------------------------------------------- 
+Which operation you would like to perform? 2 
+
+1. Display list 
+2. Show minimum number 
+3. Show number of nodes in longest path 
+Enter your choice :2 
+
+Minimum number is : 10 
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 2 
+
+1. Display list 
+2. Show minimum number 
+3. Show number of nodes in longest path 
+Enter your choice :3 
+The height of the tree of longest path is : 3 
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 4 
+
+Enter the number you want to search : 15 
+
+Number found!! 
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 3 
+Swapped!! The new list is : 
+25 
+
+20 
+
+15 
+
+10 
+
+----------------Binary Search Tree---------------- 
+1. Enter a number 
+ 
+2. Display 
+3. Swap left and right nodes 
+4. Search 
+5. Exit (enter 0) 
+-------------------------------------------------- 
+Which operation you would like to perform? 0 */
