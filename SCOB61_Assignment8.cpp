@@ -1,198 +1,272 @@
-/*Implement all the functions of a dictionary (ADT) using hashing and handle collisions 
+// Assignment No. 8 
+/* Problem Statement : Implement all the functions of a dictionary (ADT) 
+using hashing and handle collisions 
 using chaining with / without replacement. 
-Data: Set of (key, value) pairs, Keys are mapped to values, Keys must be comparable, 
-Keys must be unique. Standard Operations: Insert(key, value), Find(key), Delete(key)
-chain is not working*/
+Data: Set of (key, value) pairs, Keys are mapped to values, Keys must be 
+comparable, Keys 
+must be unique 
+Standard Operations: Insert(key, value), Find(key), Delete(key) */ 
 
-#include<iostream>
-#include<cstring>
-#define max 10
-using namespace std;
+#include <iostream> 
+#include <cstring> 
+using namespace std; 
 
-struct Dict
+struct hash 
 {
-  public:
-	char word[20];
-	char meaning[20];
-	int chain;
+string word; 
+string meaning; 
+int chain; 
+} obj[10]; 
 
-}; 	
-
-class Hashfunction
+void hash_initialization() 
 {
-	public:
-		Dict ht[max];               //ht is array of type class dict
-		char w[30],m[30];
-		Hashfunction()	
-		{
-			for(int i=0;i<max;i++)
-			{
-				strcpy(ht[i].word,"-1");
-				strcpy(ht[i].meaning,"-1");
-				ht[max].chain= -1;
-			}
-		}
-		
-		int hash(char ckey[10])
-		{
-			int i,s=0,c=0,x=0;    // string to ascii conversion
-			for(i=0;ckey[i]!='\0';i++)   // "/0" is used to check end of string
-			{
-				s=s+ckey[i];
-			}
-            x= s%max;
-            c=x;
-			return(c);
-			while(1)
-           {
-
-                        if(strcmp(ht[x].word,"-1")==0)
-                    {
-                        strcpy(ht[x].word,w);
-                        strcpy(ht[x].meaning,m);
-                        if(c!=x)
-                        {
-                            ht[c].chain=x;
-                        }
-                        break;
-                    }
-                    else
-                         x=(x+1)%10;
-
-                        if(c==x)
-                        {  cout<<"\n hash table is full";
-                            break;
-                        }
-            }
-			
-		}
-		
-		void insert(Dict d);
-		void display();
-		int search(char cW[]);
-		void delword(char cW[]);
-		
-};
-
-void Hashfunction::insert(Dict d)
+for (int i = 0; i < 10; i++) 
 {
-	int iIndex=10;
-	for(int i=0;i%max!=iIndex;i=(i+1)%max)
-	{
-		iIndex=(hash(d.word)+i*i)%max;
-		//cout<<"\n\n Position :"<<" "<<i<<" " << "-1"<<" "<<iIndex<<endl;
-		if(i>0)
-		
-		//cout<<"\n Collision is at "<<iIndex<<endl; 
-		
-		if(strcmp(ht[iIndex].word,"-1")==0)
-		{
-			ht[iIndex]=d;
-			break;
-		}
-	}	
-		
+obj[i].word = "-"; 
+obj[i].meaning = "-"; 
+obj[i].chain = -1; 
+}
+}
+void display() 
+{
+for (int i = 0; i < 10; i++) 
+{
+cout << obj[i].word << "-->" << obj[i].meaning << "-->" << 
+obj[i].chain << endl; 
+}
+}
+int calculate(string word) 
+{
+int key = 0; 
+for (int i = 0; i < word.length(); i++) 
+{
+key = key + word[i]; 
+}
+return key % 10; 
+}
+void collision(int key, string word, string meaning) 
+{
+int i = 1; 
+
+while (((key + i) % 10) < 10) 
+{
+if (obj[(key + i) % 10].word == "-") 
+{
+ 
+obj[(key + i) % 10].word = word; 
+obj[(key + i) % 10].meaning = meaning; 
+obj[(key + i - 1) % 10].chain = (key + i) % 10; 
+break; 
+}
+else 
+{
+i++; 
+}
+}
+}
+void insert() 
+{
+string wd, mg; 
+cout << "Enter the word => "; 
+cin >> wd; 
+cout << "Enter the meaning => "; 
+cin >> mg; 
+
+int hash_key = calculate(wd); 
+
+if (obj[hash_key].word == "-") 
+{
+obj[hash_key].word = wd; 
+obj[hash_key].meaning = mg; 
+}
+else 
+{
+collision(hash_key, wd, mg); 
+}
 }
 
-void Hashfunction::display()
+void find(string wd) 
 {
-	cout<<"index\t\tWord\t\tmeaning\t\tchain";
-	for(int i=0;i<max;i++)
-	{
-		cout<<"\n"<<i<<"\t\t"<<ht[i].word<<"\t\t"<<ht[i].meaning<<"\t\t"<<ht[max].chain<<"\n";
-	}
+int hash_key = calculate(wd); 
 
+if (obj[hash_key].word == wd) 
+{
+cout << "Word found at index " <<hash_key<< endl; 
+cout << obj[hash_key].word << "-->" << obj[hash_key].meaning << 
+endl; 
+}
+else if (obj[hash_key].chain != -1) 
+{
+int temp = obj[hash_key].chain; 
+while (true) 
+{
+if (obj[temp].word == wd) 
+{
+cout << "Word found at index "<< temp << endl; 
+cout << obj[temp].word << "-->" << obj[temp].meaning << 
+endl; 
+break; 
+}
+ 
+temp = obj[temp].chain; 
+}
+}
+else 
+{
+cout << "Not Found" << endl; 
+}
+}
+void Del(string wd) 
+{
+int hash_key = calculate(wd); 
+
+if (obj[hash_key].word == wd) 
+{
+obj[hash_key].word = "-"; 
+obj[hash_key].meaning = "-"; 
+obj[hash_key].chain = -1; 
+cout<<"Deleted!!"; 
+}
+else if (obj[hash_key].chain != -1) 
+{
+int temp = obj[hash_key].chain; 
+while (true) 
+{
+if (obj[temp].word == wd) 
+{
+obj[temp].word = "-"; 
+obj[temp].meaning = "-"; 
+obj[temp].chain = -1; 
+break; 
+}
+temp = obj[temp].chain; 
+}
+cout<<"Deleted!!"; 
+}
+else 
+{
+cout << "Word Not Found" << endl; 
+}
 }
 
-int Hashfunction::search(char cW[10])
+int main() 
 {
-	int iIndex,iFlag=0;
-	for(int i=0;i%max!=iIndex;i=(i+1)%max)
-	{
-		iIndex=(hash(cW)+i*i)%max;
-		if(strcmp(ht[iIndex].word,cW)==0)
-		{
-			cout<<"Word Found and Meaning is :"<<ht[iIndex].meaning<<endl;
-			iFlag=1;
-			break;
-		}
-	}
-	if(iFlag==0)
-	cout<<"Word Not Found"<<endl;
-	return 0;
+int choice, n; 
+string wd_find, wd_Del; 
+hash_initialization(); 
+do 
+{
+cout << "==============Enter your choice==============" << endl; 
+cout << "1) Insert" << endl; 
+cout << "2) Find" << endl; 
+cout << "3) Delete" << endl; 
+cout << "4) Print" << endl; 
+cout << "5) Exit" << endl; 
+ 
+cin >> choice; 
+switch (choice) 
+{
+case 1: 
+cout << "Enter how entries you want to make "; 
+cin >> n; 
+for (int i = 0; i < n; i++) 
+{
+insert(); 
+}
+break; 
+case 2: 
+cout << "Enter the word to found => "; 
+cin >> wd_find; 
+find(wd_find); 
+break; 
+case 3: 
+cout << "Enter the word to be deleted =>"; 
+cin >> wd_Del; 
+Del(wd_Del); 
+break; 
+
+case 4: 
+display(); 
+break; 
+case 5: 
+break; 
+default: 
+cout << "Invalid choice" << endl; 
+break; 
+}
+} while (choice < 5); 
+return 0; 
 }
 
-void Hashfunction::delword(char cW[10])
-{
-	int iIndex,iFlag=0;
-	for(int i=0;i%max!=iIndex;i=(i+1)%max)
-	{
-		iIndex=(hash(cW)+i*i)%max;
-		if(strcmp(ht[iIndex].word,cW)==0)
-		{
-			cout<<"\nWord Found and delword :"<<ht[iIndex].meaning<<endl;
-			strcpy(ht[iIndex].word,"-1");
-			strcpy(ht[iIndex].meaning,"-1");
-			iFlag=1;
-			break;
-		}
-	}
-	if(iFlag==0)
-	cout<<"Word Not Found"<<endl;
-	
-}
-	
-int main()
-{
-	char cW[10];
-	int x,iFlag=0;
-	Hashfunction h;
-	Dict d;
-	while(1)
-	{
-	      cout<<"**********"<<endl;
-	      cout<<"Operations on dictionary using hashtable"<<endl;
-	      cout<<"**********"<<endl;
-	      cout<<"1.Insert "<<endl;
-	      cout<<"2.Display Dictionary" <<endl;
-	      cout<<"3.Search " <<endl;
-	      cout<<"4.Delete" <<endl;
-	      cout<<"5.Exit" <<endl;
-	      cout<<"Enter your choice :-";
-	      cin>>x;
-                switch(x)
-		{
-			case 1:
-				cout<<"Enter word:";
-				cin>>d.word;
-				cout<<"Enter Meaning:";
-				cin>>d.meaning;
-				h.insert(d);
-				break;
-			
-			case 2:
-				h.display();
-				break;
-				
-			case 3:
-				cout<<"\n Enter word to be searched:";
-				cin>>cW;
-				h.search(cW);
-				break;
-				
-			case 4:
-				cout<<"\n Enter the word to be deleted:";
-				cin>>cW;
-				h.delword(cW);
-				break;
-				
-			case 5:
-				exit(1);
-			
-			default:
-                cout<<"Wrong choice"<<endl;
-				
-		}
-	}			
 
-}
+Output : 
+
+==============Enter your choice============== 
+1) Insert 
+2) Find 
+3) Delete 
+4) Print 
+5) Exit 
+1
+Enter how entries you want to make 5 
+Enter the word => ABC 
+Enter the meaning => abc 
+Enter the word => XYZ 
+Enter the meaning => xyz 
+Enter the word => PQR 
+Enter the meaning => pqr 
+Enter the word => BAC 
+Enter the meaning => bac 
+ 
+Enter the word => ZXY 
+Enter the meaning => zxy 
+==============Enter your choice============== 
+1) Insert 
+2) Find 
+3) Delete 
+4) Print 
+5) Exit 
+4
+ZXY-->zxy-->-1 
+--->--->-1 --->--->-1 
+PQR-->pqr-->-1 
+--->--->-1 --->--->-1 --->--->-1 
+XYZ-->xyz-->-1 
+ABC-->abc-->9 BAC-->bac-->0 
+==============Enter your choice============== 
+1) Insert 
+2) Find 
+3) Delete 
+4) Print 
+5) Exit 
+2
+Enter the word to found => BAC 
+Word found at index 9 
+BAC-->bac 
+==============Enter your choice============== 
+1) Insert 
+2) Find 
+3) Delete 
+4) Print 
+5) Exit 
+3
+Enter the word to be deleted =>PQR 
+Deleted!!==============Enter your choice============== 
+1) Insert 
+2) Find 
+3) Delete 
+4) Print 
+5) Exit 
+4
+ZXY-->zxy-->-1 
+--->--->-1 --->--->-1 --->--->-1 --->--->-1 --->--->-1 --->--->-1 
+XYZ-->xyz-->-1 
+ABC-->abc-->9 BAC-->bac-->0 
+ 
+==============Enter your choice============== 
+1) Insert 
+2) Find 
+3) Delete 
+4) Print 
+5) Exit 
+5
